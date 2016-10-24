@@ -1,8 +1,9 @@
 ;;; smart-compile.el --- an interface to `compile'
 
-;; Copyright (C) 1998-2014  by Seiji Zenitani
+;; Copyright (C) 1998-2015  by Seiji Zenitani
 
 ;; Author: Seiji Zenitani <zenitani@mac.com>
+;; Version: 20151112
 ;; Keywords: tools, unix
 ;; Created: 1998-12-27
 ;; Compatibility: Emacs 21 or later
@@ -62,23 +63,23 @@
   ("\\.tex\\'"        . (tex-file))
   ("\\.texi\\'"       . "makeinfo %f")
   ("\\.mp\\'"         . "mptopdf %f")
-  ("\\.pl\\'"         . "perl -cw %f")
-  ("\\.rb\\'"         . "ruby -cw %f")
+  ("\\.pl\\'"         . "perl %f")
   ("\\.py\\'"         . "python %f")
+  ("\\.rb\\'"         . "ruby %f")
+  ("\\.hs\\'"         . "ghc -o %f %n")
+;;  ("\\.pl\\'"         . "perl -cw %f") ; syntax check
+;;  ("\\.rb\\'"         . "ruby -cw %f") ; syntax check
 )  "Alist of filename patterns vs corresponding format control strings.
 Each element looks like (REGEXP . STRING) or (MAJOR-MODE . STRING).
 Visiting a file whose name matches REGEXP specifies STRING as the
 format control string.  Instead of REGEXP, MAJOR-MODE can also be used.
 The compilation command will be generated from STRING.
 The following %-sequences will be replaced by:
-
   %F  absolute pathname            ( /usr/local/bin/netscape.bin )
   %f  file name without directory  ( netscape.bin )
   %n  file name without extension  ( netscape )
   %e  extension of file name       ( bin )
-
   %o  value of `smart-compile-option-string'  ( \"user-defined\" ).
-
 If the second item of the alist element is an emacs-lisp FUNCTION,
 evaluate FUNCTION instead of running a compilation command.
 "
@@ -101,7 +102,8 @@ evaluate FUNCTION instead of running a compilation command.
   ("%e" . (or (file-name-extension (buffer-file-name)) ""))
   ("%o" . smart-compile-option-string)
 ;;   ("%U" . (user-login-name))
-  ))
+  )
+  "Alist of %-sequences for format control strings in `smart-compile-alist'.")
 (put 'smart-compile-replace-alist 'risky-local-variable t)
 
 (defvar smart-compile-check-makefile t)
